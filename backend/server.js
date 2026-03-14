@@ -1,51 +1,58 @@
-require('dotenv').config();
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const helmet = require('helmet');
-const morgan = require('morgan');
-require('dotenv').config();
+require('dotenv').config({ path: __dirname + '/.env' });
 
-const authRoutes = require('./routes/authRoutes');
-const policyRoutes = require('./routes/policyRoutes');
-const claimRoutes = require('./routes/claimRoutes');
-const analyticsRoutes = require('./routes/analyticsRoutes');
-const customerRoutes = require('./routes/customerRoutes');
-const chatbotRoutes = require('./routes/chatbotRoutes');
-const notificationRoutes = require('./routes/notificationRoutes');
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const helmet = require("helmet");
+const morgan = require("morgan");
 
-const errorMiddleware = require('./middleware/errorMiddleware');
+// Route Imports
+const authRoutes = require("./routes/authRoutes");
+const policyRoutes = require("./routes/policyRoutes");
+const claimRoutes = require("./routes/claimRoutes");
+const analyticsRoutes = require("./routes/analyticsRoutes");
+const customerRoutes = require("./routes/customerRoutes");
+const chatbotRoutes = require("./routes/chatbotRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
+
+// Error Middleware
+const errorMiddleware = require("./middleware/errorMiddleware");
 
 const app = express();
 
-// Middleware
+// ---------------- MIDDLEWARE ----------------
 app.use(helmet());
 app.use(cors());
-app.use(morgan('combined'));
+app.use(morgan("dev"));
 app.use(express.json());
 
-// Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/policies', policyRoutes);
-app.use('/api/claims', claimRoutes);
-app.use('/api/analytics', analyticsRoutes);
-app.use('/api/customers', customerRoutes);
-app.use('/api/chatbot', chatbotRoutes);
-app.use('/api/notifications', notificationRoutes);
+// ---------------- ROUTES ----------------
+app.use("/api/auth", authRoutes);
+app.use("/api/policies", policyRoutes);
+app.use("/api/claims", claimRoutes);
+app.use("/api/analytics", analyticsRoutes);
+app.use("/api/customers", customerRoutes);
+app.use("/api/chatbot", chatbotRoutes);
+app.use("/api/notifications", notificationRoutes);
 
-// Error handling middleware
+// ---------------- ERROR HANDLER ----------------
 app.use(errorMiddleware);
 
-// MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => {
-    console.log('✅ MongoDB connected');
-  })
-  .catch((err) => {
-    console.error('❌ MongoDB connection error:', err);
-  });
+// ---------------- MONGODB CONNECTION ----------------
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI);
 
-// Server
+    console.log("✅ MongoDB Connected Successfully");
+  } catch (error) {
+    console.error("❌ MongoDB connection error:", error.message);
+    process.exit(1);
+  }
+};
+
+connectDB();
+
+// ---------------- SERVER ----------------
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
