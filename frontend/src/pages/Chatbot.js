@@ -1,618 +1,143 @@
 import React, { useState, useRef, useEffect } from 'react';
-
-import { motion } from 'framer-motion';
-
-import { MessageCircle, Send, Bot, User, Sparkles } from 'lucide-react';
-
-import { chatbotService } from '../services/api';
-
-import toast from 'react-hot-toast';
-
-
-
-const Chatbot = () => {
-
-  const [messages, setMessages] = useState([
-
-    {
-
-      id: 1,
-
-      type: 'bot',
-
-      text: 'Hello! I\'m your AI insurance assistant. How can I help you today?',
-
-      suggestions: [
-
-        'Check my policy status',
-
-        'File a new claim',
-
-        'What does my policy cover?',
-
-        'Premium payment options'
-
-      ],
-
-      timestamp: new Date(),
-
-    },
-
-  ]);
-
-  const [inputMessage, setInputMessage] = useState('');
-
-  const [isTyping, setIsTyping] = useState(false);
-
-  const [customerId, setCustomerId] = useState('');
-
-  const messagesEndRef = useRef(null);
-
-  const inputRef = useRef(null);
-
-
-
-  const scrollToBottom = () => {
-
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-
-  };
-
-
-
-  useEffect(() => {
-
-    scrollToBottom();
-
-  }, [messages]);
-
-
-
-  const handleSendMessage = async () => {
-
-    if (!inputMessage.trim()) return;
-
-
-
-    const userMessage = {
-
-      id: Date.now(),
-
-      type: 'user',
-
-      text: inputMessage,
-
-      timestamp: new Date(),
-
-    };
-
-
-
-    setMessages(prev => [...prev, userMessage]);
-
-    setInputMessage('');
-
-    setIsTyping(true);
-
-
-
-    try {
-
-      const response = await chatbotService.sendMessage({
-
-        message: inputMessage,
-
-        customerId: customerId || undefined,
-
-      });
-
-
-
-      const botMessage = {
-
-        id: Date.now() + 1,
-
-        type: 'bot',
-
-        text: response.data.message,
-
-        suggestions: response.data.suggestions || [],
-
-        actions: response.data.actions || [],
-
-        timestamp: new Date(),
-
-      };
-
-
-
-      setMessages(prev => [...prev, botMessage]);
-
-    } catch (error) {
-
-      console.error('Error sending message:', error);
-
-      const errorMessage = {
-
-        id: Date.now() + 1,
-
-        type: 'bot',
-
-        text: 'Sorry, I encountered an error. Please try again later.',
-
-        timestamp: new Date(),
-
-      };
-
-      setMessages(prev => [...prev, errorMessage]);
-
-      toast.error('Failed to send message');
-
-    } finally {
-
-      setIsTyping(false);
-
-    }
-
-  };
-
-
-
-  const handleSuggestionClick = (suggestion) => {
-
-    setInputMessage(suggestion);
-
-    inputRef.current?.focus();
-
-  };
-
-
-
-  const handleActionClick = (action) => {
-
-    switch (action.type) {
-
-      case 'file_claim':
-
-        toast.info('Redirecting to claims page...');
-
-        // Navigate to claims page
-
-        break;
-
-      case 'get_quote':
-
-        toast.info('Opening quote calculator...');
-
-        // Open quote modal
-
-        break;
-
-      case 'contact_agent':
-
-        toast.info('Connecting you with an agent...');
-
-        // Initiate agent chat
-
-        break;
-
-      default:
-
-        toast.info(`Action: ${action.label}`);
-
-    }
-
-  };
-
-
-
-  const handleKeyPress = (e) => {
-
-    if (e.key === 'Enter' && !e.shiftKey) {
-
-      e.preventDefault();
-
-      handleSendMessage();
-
-    }
-
-  };
-
-
-
-  return (
-
-    <div className="h-full flex flex-col">
-
-      {/* Header */}
-
-      <motion.div
-
-        initial={{ opacity: 0, y: 20 }}
-
-        animate={{ opacity: 1, y: 0 }}
-
-        className="bg-white dark:bg-gray-800 rounded-t-xl shadow-sm p-6 border-b border-gray-200 dark:border-gray-700"
-
-      >
-
-        <div className="flex items-center justify-between">
-
-          <div className="flex items-center space-x-3">
-
-            <div className="w-10 h-10 bg-gradient-to-r from-primary-500 to-purple-600 rounded-full flex items-center justify-center">
-
-              <Bot className="w-6 h-6 text-white" />
-
-            </div>
-
-            <div>
-
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-
-                AI Insurance Assistant
-
-              </h1>
-
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-
-                Powered by advanced AI technology
-
-              </p>
-
-            </div>
-
-          </div>
-
-          <div className="flex items-center space-x-2">
-
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-
-            <span className="text-sm text-gray-600 dark:text-gray-400">Online</span>
-
-          </div>
-
-        </div>
-
-      </motion.div>
-
-
-
-      {/* Customer ID Input */}
-
-      <motion.div
-
-        initial={{ opacity: 0, y: 20 }}
-
-        animate={{ opacity: 1, y: 0 }}
-
-        transition={{ delay: 0.1 }}
-
-        className="bg-gray-50 dark:bg-gray-700/50 px-6 py-3 border-b border-gray-200 dark:border-gray-700"
-
-      >
-
-        <div className="flex items-center space-x-3">
-
-          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-
-            Customer ID (optional):
-
-          </label>
-
-          <input
-
-            type="text"
-
-            value={customerId}
-
-            onChange={(e) => setCustomerId(e.target.value)}
-
-            placeholder="Enter customer ID for personalized assistance"
-
-            className="flex-1 px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-
-          />
-
-        </div>
-
-      </motion.div>
-
-
-
-      {/* Messages */}
-
-      <div className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 p-6">
-
-        <div className="max-w-3xl mx-auto space-y-4">
-
-          {messages.map((message) => (
-
-            <motion.div
-
-              key={message.id}
-
-              initial={{ opacity: 0, y: 10 }}
-
-              animate={{ opacity: 1, y: 0 }}
-
-              transition={{ duration: 0.3 }}
-
-              className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
-
-            >
-
-              <div className={`flex items-start space-x-3 max-w-lg ${
-
-                message.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''
-
-              }`}>
-
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-
-                  message.type === 'user'
-
-                    ? 'bg-primary-600'
-
-                    : 'bg-gradient-to-r from-primary-500 to-purple-600'
-
-                }`}>
-
-                  {message.type === 'user' ? (
-
-                    <User className="w-4 h-4 text-white" />
-
-                  ) : (
-
-                    <Bot className="w-4 h-4 text-white" />
-
-                  )}
-
-                </div>
-
-                
-
-                <div className={`rounded-lg p-4 ${
-
-                  message.type === 'user'
-
-                    ? 'bg-primary-600 text-white'
-
-                    : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm'
-
-                }`}>
-
-                  <p className="text-sm">{message.text}</p>
-
-                  
-
-                  {/* Suggestions */}
-
-                  {message.suggestions && message.suggestions.length > 0 && (
-
-                    <div className="mt-3 space-y-2">
-
-                      {message.suggestions.map((suggestion, index) => (
-
-                        <motion.button
-
-                          key={index}
-
-                          whileHover={{ scale: 1.02 }}
-
-                          whileTap={{ scale: 0.98 }}
-
-                          onClick={() => handleSuggestionClick(suggestion)}
-
-                          className="w-full text-left px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-
-                        >
-
-                          {suggestion}
-
-                        </motion.button>
-
-                      ))}
-
-                    </div>
-
-                  )}
-
-                  
-
-                  {/* Actions */}
-
-                  {message.actions && message.actions.length > 0 && (
-
-                    <div className="mt-3 flex flex-wrap gap-2">
-
-                      {message.actions.map((action, index) => (
-
-                        <motion.button
-
-                          key={index}
-
-                          whileHover={{ scale: 1.02 }}
-
-                          whileTap={{ scale: 0.98 }}
-
-                          onClick={() => handleActionClick(action)}
-
-                          className="px-3 py-1 text-sm bg-primary-100 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300 rounded-full hover:bg-primary-200 dark:hover:bg-primary-900/30 transition-colors flex items-center space-x-1"
-
-                        >
-
-                          <Sparkles className="w-3 h-3" />
-
-                          <span>{action.label}</span>
-
-                        </motion.button>
-
-                      ))}
-
-                    </div>
-
-                  )}
-
-                  
-
-                  <div className={`text-xs mt-2 ${
-
-                    message.type === 'user' ? 'text-primary-200' : 'text-gray-500 dark:text-gray-400'
-
-                  }`}>
-
-                    {message.timestamp.toLocaleTimeString()}
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            </motion.div>
-
-          ))}
-
-          
-
-          {/* Typing Indicator */}
-
-          {isTyping && (
-
-            <motion.div
-
-              initial={{ opacity: 0, y: 10 }}
-
-              animate={{ opacity: 1, y: 0 }}
-
-              className="flex justify-start"
-
-            >
-
-              <div className="flex items-start space-x-3">
-
-                <div className="w-8 h-8 bg-gradient-to-r from-primary-500 to-purple-600 rounded-full flex items-center justify-center">
-
-                  <Bot className="w-4 h-4 text-white" />
-
-                </div>
-
-                <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
-
-                  <div className="flex space-x-1">
-
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            </motion.div>
-
-          )}
-
-          
-
-          <div ref={messagesEndRef} />
-
-        </div>
-
-      </div>
-
-
-
-      {/* Input */}
-
-      <motion.div
-
-        initial={{ opacity: 0, y: 20 }}
-
-        animate={{ opacity: 1, y: 0 }}
-
-        transition={{ delay: 0.2 }}
-
-        className="bg-white dark:bg-gray-800 rounded-b-xl shadow-sm p-6 border-t border-gray-200 dark:border-gray-700"
-
-      >
-
-        <div className="flex items-center space-x-3">
-
-          <input
-
-            ref={inputRef}
-
-            type="text"
-
-            value={inputMessage}
-
-            onChange={(e) => setInputMessage(e.target.value)}
-
-            onKeyPress={handleKeyPress}
-
-            placeholder="Type your message..."
-
-            className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-
-            disabled={isTyping}
-
-          />
-
-          <motion.button
-
-            whileHover={{ scale: 1.05 }}
-
-            whileTap={{ scale: 0.95 }}
-
-            onClick={handleSendMessage}
-
-            disabled={!inputMessage.trim() || isTyping}
-
-            className="px-4 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-
-          >
-
-            <Send className="w-5 h-5" />
-
-          </motion.button>
-
-        </div>
-
-        
-
-        <div className="mt-3 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-
-          <div className="flex items-center space-x-1">
-
-            <Sparkles className="w-3 h-3" />
-
-            <span>AI-powered responses</span>
-
-          </div>
-
-          <div>
-
-            Press Enter to send, Shift+Enter for new line
-
-          </div>
-
-        </div>
-
-      </motion.div>
-
-    </div>
-
-  );
-
+import { motion, AnimatePresence } from 'framer-motion';
+import { Send, Bot, User, MessageSquare, Sparkles } from 'lucide-react';
+import { chatAPI } from '../utils/api';
+
+const QUICK_PROMPTS = [
+  'How do I file a new claim?',
+  'What types of policies are available?',
+  'How does fraud detection work?',
+  'What is my coverage status?',
+];
+
+const mockReply = async (message) => {
+  await new Promise(r => setTimeout(r, 800));
+  const lower = message.toLowerCase();
+  if (lower.includes('claim')) return "To file a claim, navigate to the Claims section in the sidebar and click 'File Claim'. You'll need your policy number, incident date, and a brief description. Our AI system will automatically analyze for fraud patterns.";
+  if (lower.includes('policy') || lower.includes('coverage')) return "We offer 6 types of insurance policies: Health, Auto, Life, Property, Travel, and Business. Each comes with customizable coverage amounts and premium options. Visit the Policies section to view or create policies.";
+  if (lower.includes('fraud')) return "InsurAI uses advanced machine learning to detect fraud in real-time. Every claim submission is scored 0-100 for fraud risk. Claims above 60 are automatically flagged for review. Our models achieve 94.2% accuracy.";
+  return "I'm InsurAI's virtual assistant powered by AI. I can help you with policy inquiries, claim status, fraud reporting, and coverage questions. What would you like to know?";
 };
 
+export default function Chatbot() {
+  const [messages, setMessages] = useState([
+    { id: 1, role: 'assistant', text: "Hi! I'm InsurAI Assistant 🛡️ I'm here to help with policy questions, claim status, fraud reporting, and more. How can I assist you today?", time: new Date() }
+  ]);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const bottomRef = useRef(null);
 
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
-export default Chatbot;
+  const send = async (text) => {
+    const msg = text || input.trim();
+    if (!msg) return;
+    setInput('');
+    const userMsg = { id: Date.now(), role: 'user', text: msg, time: new Date() };
+    setMessages(prev => [...prev, userMsg]);
+    setLoading(true);
+    try {
+      const { data } = await chatAPI.send(msg);
+      setMessages(prev => [...prev, { id: Date.now() + 1, role: 'assistant', text: data.reply, time: new Date() }]);
+    } catch {
+      const reply = await mockReply(msg);
+      setMessages(prev => [...prev, { id: Date.now() + 1, role: 'assistant', text: reply, time: new Date() }]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  return (
+    <div className="animate-fade-in h-[calc(100vh-8rem)] flex flex-col">
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-10 h-10 rounded-xl bg-brand-500/10 flex items-center justify-center relative">
+          <MessageSquare className="text-brand-400" size={20} />
+          <span className="absolute -top-1 -right-1 w-3 h-3 bg-brand-500 rounded-full border-2 border-surface-950 animate-pulse" />
+        </div>
+        <div>
+          <h1 className="text-xl font-display font-bold text-primary flex items-center gap-2">
+            AI Assistant <Sparkles size={16} className="text-brand-500" />
+          </h1>
+          <p className="text-secondary text-xs">Powered by InsurAI Intelligence Engine</p>
+        </div>
+      </div>
+
+      {/* Chat container */}
+      <div className="flex-1 card flex flex-col overflow-hidden">
+        {/* Messages */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          <AnimatePresence initial={false}>
+            {messages.map((msg) => (
+              <motion.div key={msg.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'assistant' ? 'bg-brand-500/20 text-brand-500' : 'bg-white/10 text-primary'}`}>
+                  {msg.role === 'assistant' ? <Bot size={16} /> : <User size={14} />}
+                </div>
+                <div className={`max-w-[75%] ${msg.role === 'user' ? 'items-end' : 'items-start'} flex flex-col gap-1`}>
+                  <div className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                    msg.role === 'assistant'
+                      ? 'bg-white/[0.05] text-primary rounded-tl-sm'
+                      : 'bg-brand-500/20 text-brand-100 rounded-tr-sm border border-brand-500/20'
+                  }`}>
+                    {msg.text}
+                  </div>
+                  <span className="text-xs text-muted">
+                    {msg.time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+
+          {loading && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex gap-3">
+              <div className="w-8 h-8 rounded-full bg-brand-500/20 flex items-center justify-center">
+                <Bot size={16} className="text-brand-400" />
+              </div>
+              <div className="bg-white/[0.05] rounded-2xl rounded-tl-sm px-4 py-3">
+                <div className="flex gap-1">
+                  {[0, 1, 2].map(i => (
+                    <div key={i} className="w-2 h-2 rounded-full bg-brand-400 animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
+          <div ref={bottomRef} />
+        </div>
+
+        {/* Quick prompts */}
+        {messages.length === 1 && (
+          <div className="px-4 pb-3 flex gap-2 flex-wrap">
+            {QUICK_PROMPTS.map((p, i) => (
+              <button key={i} onClick={() => send(p)}
+                className="text-xs bg-white/[0.05] hover:bg-white/[0.09] border border-white/[0.08] hover:border-brand-500/30 text-slate-300 hover:text-brand-300 px-3 py-1.5 rounded-full transition-all">
+                {p}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Input */}
+        <div className="border-t border-white/[0.06] p-4">
+          <div className="flex gap-3">
+            <input
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()}
+              placeholder="Ask about policies, claims, or fraud detection..."
+              className="flex-1 bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-2.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500/50 focus:bg-white/[0.06] transition-all"
+            />
+            <button onClick={() => send()} disabled={!input.trim() || loading}
+              className="w-10 h-10 rounded-xl bg-brand-500 hover:bg-brand-600 disabled:opacity-40 flex items-center justify-center text-white transition-all shrink-0">
+              <Send size={16} />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

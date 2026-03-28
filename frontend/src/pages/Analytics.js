@@ -1,345 +1,158 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import {
-  LineChart,
-  Line,
-  BarChart,
-  Bar,
-  PieChart,
-  Pie,
-  Cell,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  Area,
-  AreaChart,
-} from 'recharts';
-import { analyticsService } from '../services/api';
-import toast from 'react-hot-toast';
+import { AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, RadarChart, Radar, PolarGrid, PolarAngleAxis, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { analyticsAPI } from '../utils/api';
+import { mockAnalytics, MONTHS } from '../utils/mockData';
+import KPICard from '../components/KPICard';
+import { FileText, ClipboardList, Users, TrendingUp } from 'lucide-react';
 
-const Analytics = () => {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [period, setPeriod] = useState('12months');
+const COLORS = ['#15b36d', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444', '#06b6d4'];
 
-  useEffect(() => {
-    fetchAnalytics();
-  }, [period]);
-
-  const fetchAnalytics = async () => {
-    try {
-      setLoading(true);
-      const response = await analyticsService.getDetailedAnalytics({ period });
-      setData(response.data.data);
-    } catch (error) {
-      console.error('Error fetching analytics:', error);
-      toast.error('Failed to load analytics data');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Analytics</h1>
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {[...Array(4)].map((_, index) => (
-            <div key={index} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
-              <div className="h-80 bg-gray-100 dark:bg-gray-700 rounded-lg animate-pulse"></div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  const revenueData = data?.revenueAnalytics || {
-    totalRevenue: 2500000,
-    averagePremium: 250,
-    policyCount: 1000,
-  };
-
-  const claimsData = data?.claimsAnalytics || [
-    { _id: 'approved', count: 450, totalAmount: 2250000, averageAmount: 5000 },
-    { _id: 'rejected', count: 150, totalAmount: 0, averageAmount: 0 },
-    { _id: 'pending', count: 100, totalAmount: 500000, averageAmount: 5000 },
-  ];
-
-  const customerData = data?.customerAnalytics || { newCustomers: 250 };
-
-  const fraudData = data?.fraudAnalytics || [
-    { _id: 'open', count: 25 },
-    { _id: 'investigating', count: 15 },
-    { _id: 'resolved', count: 60 },
-  ];
-
-  const monthlyRevenue = [
-    { month: 'Jan', revenue: 180000, policies: 720 },
-    { month: 'Feb', revenue: 195000, policies: 780 },
-    { month: 'Mar', revenue: 210000, policies: 840 },
-    { month: 'Apr', revenue: 225000, policies: 900 },
-    { month: 'May', revenue: 240000, policies: 960 },
-    { month: 'Jun', revenue: 255000, policies: 1020 },
-  ];
-
-  const policyTypes = [
-    { name: 'Auto', value: 35, color: '#3b82f6' },
-    { name: 'Home', value: 25, color: '#10b981' },
-    { name: 'Life', value: 20, color: '#8b5cf6' },
-    { name: 'Health', value: 15, color: '#f59e0b' },
-    { name: 'Business', value: 5, color: '#ef4444' },
-  ];
-
-  const claimTrends = [
-    { month: 'Jan', claims: 45, approved: 30, rejected: 15 },
-    { month: 'Feb', claims: 52, approved: 35, rejected: 17 },
-    { month: 'Mar', claims: 48, approved: 32, rejected: 16 },
-    { month: 'Apr', claims: 61, approved: 40, rejected: 21 },
-    { month: 'May', claims: 55, approved: 38, rejected: 17 },
-    { month: 'Jun', claims: 67, approved: 45, rejected: 22 },
-  ];
-
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex items-center justify-between"
-      >
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Analytics Dashboard
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
-            Comprehensive insights and performance metrics
-          </p>
-        </div>
-        
-        <div className="flex items-center space-x-3">
-          <select
-            value={period}
-            onChange={(e) => setPeriod(e.target.value)}
-            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-          >
-            <option value="1month">Last Month</option>
-            <option value="3months">Last 3 Months</option>
-            <option value="6months">Last 6 Months</option>
-            <option value="12months">Last 12 Months</option>
-          </select>
-        </div>
-      </motion.div>
-
-      {/* Key Metrics */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-        className="grid grid-cols-1 md:grid-cols-4 gap-6"
-      >
-        <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-sm p-6 text-white">
-          <h3 className="text-sm font-medium opacity-90">Total Revenue</h3>
-          <p className="text-3xl font-bold mt-2">
-            ${(revenueData.totalRevenue / 1000000).toFixed(1)}M
-          </p>
-          <p className="text-sm opacity-90 mt-2">+12% from last period</p>
-        </div>
-        
-        <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl shadow-sm p-6 text-white">
-          <h3 className="text-sm font-medium opacity-90">Active Policies</h3>
-          <p className="text-3xl font-bold mt-2">
-            {revenueData.policyCount.toLocaleString()}
-          </p>
-          <p className="text-sm opacity-90 mt-2">+8% growth</p>
-        </div>
-        
-        <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-sm p-6 text-white">
-          <h3 className="text-sm font-medium opacity-90">New Customers</h3>
-          <p className="text-3xl font-bold mt-2">
-            {customerData.newCustomers}
-          </p>
-          <p className="text-sm opacity-90 mt-2">+15% acquisition</p>
-        </div>
-        
-        <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl shadow-sm p-6 text-white">
-          <h3 className="text-sm font-medium opacity-90">Avg Premium</h3>
-          <p className="text-3xl font-bold mt-2">
-            ${revenueData.averagePremium}
-          </p>
-          <p className="text-sm opacity-90 mt-2">+5% increase</p>
-        </div>
-      </motion.div>
-
-      {/* Charts Row 1 */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Revenue Trends */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6"
-        >
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Revenue Trends
-          </h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <AreaChart data={monthlyRevenue}>
-              <defs>
-                <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1}/>
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey="month" stroke="#6b7280" />
-              <YAxis stroke="#6b7280" />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '8px',
-                }}
-              />
-              <Area
-                type="monotone"
-                dataKey="revenue"
-                stroke="#3b82f6"
-                strokeWidth={2}
-                fill="url(#colorRevenue)"
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        </motion.div>
-
-        {/* Policy Distribution */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6"
-        >
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Policy Distribution
-          </h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={policyTypes}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                outerRadius={80}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {policyTypes.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
-        </motion.div>
-      </div>
-
-      {/* Charts Row 2 */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Claims Analysis */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6"
-        >
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Claims Analysis
-          </h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={claimsData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey="_id" stroke="#6b7280" />
-              <YAxis stroke="#6b7280" />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '8px',
-                }}
-              />
-              <Bar dataKey="count" fill="#3b82f6" radius={[8, 8, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </motion.div>
-
-        {/* Claim Trends */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.5 }}
-          className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6"
-        >
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Claim Trends
-          </h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={claimTrends}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey="month" stroke="#6b7280" />
-              <YAxis stroke="#6b7280" />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '8px',
-                }}
-              />
-              <Legend />
-              <Line type="monotone" dataKey="claims" stroke="#3b82f6" strokeWidth={2} />
-              <Line type="monotone" dataKey="approved" stroke="#10b981" strokeWidth={2} />
-              <Line type="monotone" dataKey="rejected" stroke="#ef4444" strokeWidth={2} />
-            </LineChart>
-          </ResponsiveContainer>
-        </motion.div>
-      </div>
-
-      {/* Fraud Cases */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.6 }}
-        className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6"
-      >
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-          Fraud Cases Status
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {fraudData.map((item, index) => (
-            <div key={index} className="text-center">
-              <div className="text-3xl font-bold text-gray-900 dark:text-white">
-                {item.count}
-              </div>
-              <div className="text-sm text-gray-600 dark:text-gray-400 capitalize">
-                {item._id.replace('_', ' ')}
-              </div>
-              <div className="mt-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                <div
-                  className="bg-primary-600 h-2 rounded-full"
-                  style={{ width: `${(item.count / fraudData.reduce((sum, f) => sum + f.count, 0)) * 100}%` }}
-                ></div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </motion.div>
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active && payload?.length) return (
+    <div className="bg-surface-800 border border-white/10 rounded-xl p-3 text-xs shadow-xl">
+      <p className="text-slate-300 font-medium mb-1">{label}</p>
+      {payload.map((p, i) => <p key={i} style={{ color: p.color }}>{p.name || p.dataKey}: <span className="font-semibold">{p.value}</span></p>)}
     </div>
   );
+  return null;
 };
 
-export default Analytics;
+export default function Analytics() {
+  const [data, setData] = useState(mockAnalytics);
+
+  useEffect(() => {
+    analyticsAPI.get().then(r => setData(r.data)).catch(() => {});
+  }, []);
+
+  const { kpis, monthlyPolicies, claimsByStatus, policyByType, customerRisk } = data;
+
+  const lineData = monthlyPolicies?.map(m => ({ month: MONTHS[m._id.month - 1], policies: m.count, claims: Math.floor(m.count * 0.22) })) || [];
+  const claimsData = claimsByStatus?.map(c => ({ name: c._id, value: c.count })) || [];
+  const typesData = policyByType?.map(p => ({ type: p._id, count: p.count })) || [];
+  const riskData = customerRisk?.map(r => ({ risk: r._id, count: r.count })) || [];
+
+  return (
+    <div className="space-y-5 animate-fade-in">
+      <div>
+        <h1 className="text-2xl font-display font-bold text-primary">Analytics</h1>
+        <p className="text-secondary text-sm mt-0.5">Business intelligence and performance metrics</p>
+      </div>
+
+      {/* KPIs */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <KPICard title="Total Policies" value={kpis?.totalPolicies?.toLocaleString()} change="+8.2%" icon={FileText} color="brand" delay={0} />
+        <KPICard title="Total Claims" value={kpis?.totalClaims?.toLocaleString()} change="+3.1%" icon={ClipboardList} color="blue" delay={0.05} />
+        <KPICard title="Customers" value={kpis?.totalCustomers?.toLocaleString()} change="+12.4%" icon={Users} color="purple" delay={0.1} />
+        <KPICard title="Revenue" value={kpis?.totalRevenue ? `₹${(kpis.totalRevenue / 100000).toFixed(1)}L` : '₹48.2L'} change="+5.7%" icon={TrendingUp} color="orange" delay={0.15} />
+      </div>
+
+      {/* Charts row 1 */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="card bg-surface-900 border-white/[0.06] p-5">
+          <h3 className="font-display font-semibold text-white mb-4">Policy & Claims Trend</h3>
+          <ResponsiveContainer width="100%" height={240}>
+            <AreaChart data={lineData}>
+              <defs>
+                {[['policies', '#15b36d'], ['claims', '#3b82f6']].map(([key, color]) => (
+                  <linearGradient key={key} id={`grad_${key}`} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor={color} stopOpacity={0.2} />
+                    <stop offset="100%" stopColor={color} stopOpacity={0} />
+                  </linearGradient>
+                ))}
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
+              <XAxis dataKey="month" tick={{ fill: '#64748b', fontSize: 11 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: '#64748b', fontSize: 11 }} axisLine={false} tickLine={false} />
+              <Tooltip content={<CustomTooltip />} />
+              <Legend wrapperStyle={{ fontSize: '12px', color: '#64748b' }} />
+              <Area type="monotone" dataKey="policies" stroke="#15b36d" strokeWidth={2} fill="url(#grad_policies)" name="Policies" />
+              <Area type="monotone" dataKey="claims" stroke="#3b82f6" strokeWidth={2} fill="url(#grad_claims)" name="Claims" />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="card bg-surface-900 border-white/[0.06] p-5">
+          <h3 className="font-display font-semibold text-white mb-4">Claims Distribution</h3>
+          <div className="flex items-center gap-4">
+            <ResponsiveContainer width="50%" height={200}>
+              <PieChart>
+                <Pie data={claimsData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={75} innerRadius={45}>
+                  {claimsData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+                </Pie>
+                <Tooltip content={<CustomTooltip />} />
+              </PieChart>
+            </ResponsiveContainer>
+            <div className="flex-1 space-y-2">
+              {claimsData.map((item, i) => (
+                <div key={i} className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full" style={{ background: COLORS[i % COLORS.length] }} />
+                    <span className="text-xs text-slate-400">{item.name}</span>
+                  </div>
+                  <span className="text-xs font-semibold text-white">{item.value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Charts row 2 */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="card bg-surface-900 border-white/[0.06] p-5">
+          <h3 className="font-display font-semibold text-white mb-4">Policies by Type</h3>
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={typesData} barSize={32}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
+              <XAxis dataKey="type" tick={{ fill: '#64748b', fontSize: 11 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: '#64748b', fontSize: 11 }} axisLine={false} tickLine={false} />
+              <Tooltip content={<CustomTooltip />} />
+              <Bar dataKey="count" radius={[6, 6, 0, 0]} name="Count">
+                {typesData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="card bg-surface-900 border-white/[0.06] p-5">
+          <h3 className="font-display font-semibold text-white mb-4">Customer Risk Profile</h3>
+          <div className="space-y-4 mt-6">
+            {riskData.map((item, i) => {
+              const total = riskData.reduce((s, r) => s + r.count, 0);
+              const pct = total > 0 ? Math.round((item.count / total) * 100) : 0;
+              const colors = { Low: 'bg-brand-500', Medium: 'bg-amber-500', High: 'bg-red-500' };
+              return (
+                <div key={i}>
+                  <div className="flex justify-between text-sm mb-1.5">
+                    <span className="text-slate-300 font-medium">{item.risk} Risk</span>
+                    <span className="text-slate-400">{item.count} customers ({pct}%)</span>
+                  </div>
+                  <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                    <motion.div initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ delay: i * 0.1, duration: 0.8 }}
+                      className={`h-full rounded-full ${colors[item.risk]}`} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="grid grid-cols-3 gap-3 mt-6 pt-4 border-t border-white/[0.06]">
+            <div className="text-center">
+              <p className="text-xl font-display font-bold text-white">{kpis?.approvedClaims || 398}</p>
+              <p className="text-xs text-slate-500">Approved</p>
+            </div>
+            <div className="text-center border-x border-white/[0.06]">
+              <p className="text-xl font-display font-bold text-amber-400">{kpis?.pendingClaims || 127}</p>
+              <p className="text-xs text-slate-500">Pending</p>
+            </div>
+            <div className="text-center">
+              <p className="text-xl font-display font-bold text-red-400">{kpis?.rejectedClaims || 109}</p>
+              <p className="text-xs text-slate-500">Rejected</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

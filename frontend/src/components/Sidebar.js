@@ -1,114 +1,102 @@
 import React from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { 
-  X, 
-  LayoutDashboard, 
-  Users, 
-  FileText, 
-  Shield, 
-  AlertCircle, 
-  BarChart3, 
-  MessageSquare,
-  User
+import {
+  LayoutDashboard, FileText, ClipboardList, Users, BarChart3,
+  ShieldAlert, Brain, MessageSquare, Settings, LogOut, Shield
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 
-const Sidebar = ({ isOpen, onClose }) => {
-  const location = useLocation();
+const navItems = [
+  { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/policies', icon: FileText, label: 'Policies' },
+  { to: '/claims', icon: ClipboardList, label: 'Claims' },
+  { to: '/customers', icon: Users, label: 'Customers' },
+  { to: '/analytics', icon: BarChart3, label: 'Analytics' },
+  { to: '/fraud-detection', icon: ShieldAlert, label: 'Fraud Detection' },
+  { to: '/risk-analysis', icon: Brain, label: 'AI Risk Analysis' },
+  { to: '/chatbot', icon: MessageSquare, label: 'AI Assistant' },
+  { to: '/settings', icon: Settings, label: 'Settings' },
+];
 
-  const navigation = [
-    { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-    { name: 'Customers', href: '/customers', icon: Users },
-    { name: 'Policies', href: '/policies', icon: Shield },
-    { name: 'Policy List', href: '/policy-list', icon: FileText },
-    { name: 'Claims', href: '/claims', icon: AlertCircle },
-    { name: 'Analytics', href: '/analytics', icon: BarChart3 },
-    { name: 'AI Chatbot', href: '/chatbot', icon: MessageSquare },
-    { name: 'Profile', href: '/profile', icon: User },
-  ];
+export default function Sidebar({ isOpen, onClose }) {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  console.log('Sidebar user data:', user); // Debug log
+
+  const handleLogout = () => {
+    logout();
+    toast.success('Logged out successfully');
+    navigate('/login');
+  };
 
   return (
     <>
-      {/* Mobile sidebar overlay */}
+      {/* Mobile overlay */}
       {isOpen && (
-        <div 
-          className="fixed inset-0 z-40 lg:hidden"
-          onClick={onClose}
-        >
-          <div className="absolute inset-0 bg-blue-900/50 dark:bg-blue-900/70 opacity-75"></div>
-        </div>
+        <div className="fixed inset-0 bg-black/60 z-20 lg:hidden" onClick={onClose} />
       )}
 
-      {/* Sidebar */}
-      <div className={`
-        fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 shadow-xl transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 border-r border-blue-100 dark:border-blue-900
-        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
-      `}>
-        <div className="flex items-center justify-between h-16 px-6 border-b border-blue-100 dark:border-blue-900">
-          <div className="flex items-center">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
+      <motion.aside
+        initial={false}
+        className={`
+          fixed top-0 left-0 h-full w-64 z-30
+          dark:bg-surface-900 light:bg-white dark:border-r border-white/[0.06] light:border-r border-surface-200
+          flex flex-col
+          transition-transform duration-300 ease-in-out
+          ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        `}
+      >
+        {/* Logo */}
+        <div className="p-6 dark:border-b border-white/[0.06] light:border-b border-surface-200">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-brand-500 flex items-center justify-center glow-blue">
               <Shield className="w-5 h-5 text-white" />
             </div>
-            <span className="ml-3 text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-              INSUREAI
-            </span>
+            <div>
+              <h1 className="dark:text-white light:text-surface-900 font-display font-bold text-lg leading-none">InsurAI</h1>
+            </div>
           </div>
-          
-          <button
-            onClick={onClose}
-            className="lg:hidden p-2 rounded-md text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
-          >
-            <X className="h-6 w-6" />
-          </button>
         </div>
 
-        <nav className="mt-6 px-3">
-          <div className="space-y-1">
-            {navigation.map((item) => {
-              const isActive = location.pathname === item.href;
-              return (
-                <NavLink
-                  key={item.name}
-                  to={item.href}
-                  onClick={() => onClose()}
-                  className={`
-                    group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200
-                    ${isActive
-                      ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-r-2 border-blue-600'
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-700 dark:hover:text-blue-300'
-                    }
-                  `}
-                >
-                  <motion.div
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                  >
-                    <item.icon 
-                      className={`
-                        mr-3 h-5 w-5 flex-shrink-0
-                        ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 group-hover:text-blue-500 dark:group-hover:text-blue-400'}
-                      `} 
-                    />
-                  </motion.div>
-                  {item.name}
-                </NavLink>
-              );
-            })}
-          </div>
+        {/* Navigation */}
+        <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+          {navItems.map(({ to, icon: Icon, label }) => (
+            <NavLink
+              key={to}
+              to={to}
+              onClick={() => window.innerWidth < 1024 && onClose()}
+              className={({ isActive }) =>
+                `nav-link ${isActive
+                  ? 'bg-brand-500/15 text-brand-500 border-r-2 border-brand-500 rounded-r-none mr-0'
+                  : 'dark:text-slate-400 light:text-surface-600 dark:hover:text-white light:hover:text-surface-900 hover:bg-white/[0.04] transition-colors'
+                }`
+              }
+            >
+              <Icon className="w-4.5 h-4.5 shrink-0" size={18} />
+              <span>{label}</span>
+            </NavLink>
+          ))}
         </nav>
 
-        {/* Sidebar footer */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-blue-100 dark:border-blue-900">
-          <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg p-4 text-white shadow-lg">
-            <h3 className="font-semibold text-sm mb-1">AI-Powered Insurance</h3>
-            <p className="text-xs opacity-90">
-              Advanced fraud detection and risk assessment
-            </p>
+        {/* User profile at bottom */}
+        <div className="p-4 dark:border-t border-white/[0.06] light:border-t border-surface-200">
+          <div className="flex items-center gap-3 px-2 py-2 rounded-xl dark:hover:bg-white/[0.04] light:hover:bg-surface-100 transition-colors">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white text-sm font-semibold shrink-0">
+              {user?.name?.[0]?.toUpperCase() || 'A'}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="dark:text-white light:text-surface-900 text-sm font-medium truncate">{user?.name || 'Admin'}</p>
+              <p className="dark:text-slate-500 light:text-surface-600 text-xs truncate">Admin</p>
+            </div>
+            <button onClick={handleLogout} className="dark:text-slate-500 light:text-surface-600 dark:hover:text-red-400 light:hover:text-red-500 transition-colors" title="Logout">
+              <LogOut size={16} />
+            </button>
           </div>
         </div>
-      </div>
+      </motion.aside>
     </>
   );
-};
-
-export default Sidebar;
+}

@@ -1,338 +1,334 @@
-# INSUREAI - AI-Powered Insurance Platform
+# InsurAI — Corporate Policy Automation & Intelligence System
 
-A comprehensive, production-level AI Insurance SaaS platform built with React, Node.js, and MongoDB.
-
-## 🚀 Features
-
-### Core Features
-- **Customer Management**: Complete customer database with policies and claims history
-- **Policy Management**: Create, update, and manage insurance policies with AI risk assessment
-- **Claims Processing**: File, process, and manage claims with AI fraud detection
-- **Analytics Dashboard**: Comprehensive analytics with real-time insights and charts
-- **AI Chatbot**: Intelligent insurance assistant for customer support
-
-### AI Features
-- **Fraud Detection**: Advanced AI algorithms to detect suspicious claims
-- **Risk Scoring**: AI-powered risk assessment for policy underwriting
-- **Smart Chatbot**: Natural language processing for customer inquiries
-
-### Technical Features
-- **Modern UI/UX**: Professional SaaS dashboard with dark/light theme
-- **Responsive Design**: Mobile-first approach with TailwindCSS
-- **Real-time Updates**: Live data synchronization
-- **Advanced Tables**: Search, filters, pagination, and export functionality
-- **Beautiful Charts**: Interactive data visualizations with Recharts
-- **Smooth Animations**: Framer Motion animations throughout
-
-## 🛠 Tech Stack
-
-### Frontend
-- **React 18** - Modern React with hooks
-- **TailwindCSS** - Utility-first CSS framework
-- **Framer Motion** - Smooth animations
-- **Recharts** - Interactive charts
-- **Lucide React** - Beautiful icons
-- **React Router** - Client-side routing
-- **Axios** - HTTP client
-- **React Hot Toast** - Toast notifications
-
-### Backend
-- **Node.js** - Runtime environment
-- **Express.js** - Web framework
-- **MongoDB** - NoSQL database
-- **Mongoose** - ODM for MongoDB
-- **JWT** - Authentication
-- **Bcrypt** - Password hashing
-- **Express Validator** - Input validation
-- **Helmet** - Security headers
-- **Morgan** - HTTP request logger
-
-### AI & Analytics
-- **Custom Fraud Detection** - Pattern recognition algorithms
-- **Risk Assessment Engine** - Machine learning-based scoring
-- **Natural Language Processing** - Chatbot intelligence
-
-## 📁 Project Structure
-
-```
-insure/
-├── backend/
-│   ├── config/
-│   │   └── db.js                 # Database configuration
-│   ├── controllers/
-│   │   ├── authController.js     # Authentication logic
-│   │   ├── customerController.js # Customer management
-│   │   ├── policyController.js   # Policy management
-│   │   ├── claimController.js    # Claims processing
-│   │   ├── analyticsController.js # Analytics data
-│   │   └── chatbotController.js  # AI chatbot
-│   ├── middleware/
-│   │   ├── authMiddleware.js     # JWT authentication
-│   │   └── errorMiddleware.js    # Error handling
-│   ├── models/
-│   │   ├── User.js               # User schema
-│   │   ├── Customer.js           # Customer schema
-│   │   ├── Policy.js             # Policy schema
-│   │   ├── Claim.js              # Claim schema
-│   │   └── Fraudcase.js          # Fraud case schema
-│   ├── routes/
-│   │   ├── authRoutes.js         # Authentication routes
-│   │   ├── customerRoutes.js     # Customer routes
-│   │   ├── policyRoutes.js       # Policy routes
-│   │   ├── claimRoutes.js        # Claim routes
-│   │   ├── analyticsRoutes.js    # Analytics routes
-│   │   └── chatbotRoutes.js      # Chatbot routes
-│   ├── utils/
-│   │   ├── fraudDetection.js      # AI fraud detection
-│   │   └── riskScore.js          # Risk assessment
-│   └── server.js                 # Server entry point
-├── frontend/
-│   ├── public/
-│   │   ├── index.html
-│   │   ├── index.css
-│   │   └── manifest.json
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── Layout.js         # Main layout
-│   │   │   ├── Navbar.js         # Navigation bar
-│   │   │   ├── Sidebar.js        # Sidebar navigation
-│   │   │   ├── DataTable.js      # Reusable data table
-│   │   │   ├── DashboardCards.js # Dashboard cards
-│   │   │   ├── FraudAlerts.js    # Fraud alerts component
-│   │   │   ├── RecentActivity.js # Recent activity
-│   │   │   ├── ProtectedRoute.js  # Route protection
-│   │   │   └── Charts/           # Chart components
-│   │   ├── contexts/
-│   │   │   ├── AuthContext.js    # Authentication context
-│   │   │   └── ThemeContext.js   # Theme management
-│   │   ├── pages/
-│   │   │   ├── Dashboard.js      # Main dashboard
-│   │   │   ├── Customers.js      # Customer management
-│   │   │   ├── Policies.js       # Policy management
-│   │   │   ├── PolicyList.js     # Policy list view
-│   │   │   ├── Claims.js         # Claims management
-│   │   │   ├── Analytics.js      # Analytics dashboard
-│   │   │   ├── Chatbot.js        # AI chatbot
-│   │   │   └── Login.js          # Login page
-│   │   ├── services/
-│   │   │   └── api.js            # API service layer
-│   │   ├── App.js                # Main app component
-│   │   └── index.js              # App entry point
-│   ├── package.json
-│   ├── tailwind.config.js
-│   └── postcss.config.js
-├── package.json                  # Root package.json
-├── .env                         # Environment variables
-└── README.md                    # This file
-```
-
-## 🚀 Quick Start
-
-### Prerequisites
-- Node.js (v16+)
-- MongoDB (local or MongoDB Atlas)
-- npm or yarn
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd insure
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm run install-deps
-   ```
-
-3. **Environment setup**
-   - Copy `.env` file and update with your configuration
-   - Set your MongoDB URI
-   - Set your JWT secret
-
-4. **Start the application**
-   ```bash
-   # Start both frontend and backend
-   npm run dev
-   
-   # Or start individually
-   npm run server    # Backend only
-   cd frontend && npm start  # Frontend only
-   ```
-
-5. **Access the application**
-   - Frontend: http://localhost:3000
-   - Backend API: http://localhost:5000
-
-## 📊 API Endpoints
-
-### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - User login
-- `GET /api/auth/me` - Get current user
-
-### Customers
-- `GET /api/customers` - Get all customers
-- `POST /api/customers` - Create customer
-- `GET /api/customers/:id` - Get customer by ID
-- `PUT /api/customers/:id` - Update customer
-- `DELETE /api/customers/:id` - Delete customer
-
-### Policies
-- `GET /api/policies` - Get all policies
-- `POST /api/policies` - Create policy
-- `GET /api/policies/:id` - Get policy by ID
-- `PUT /api/policies/:id` - Update policy
-- `DELETE /api/policies/:id` - Delete policy
-
-### Claims
-- `GET /api/claims` - Get all claims
-- `POST /api/claims` - Create claim
-- `GET /api/claims/:id` - Get claim by ID
-- `PUT /api/claims/:id` - Update claim
-- `PUT /api/claims/:id/approve` - Approve claim
-- `PUT /api/claims/:id/reject` - Reject claim
-
-### Analytics
-- `GET /api/analytics/dashboard` - Get dashboard analytics
-- `GET /api/analytics/detailed` - Get detailed analytics
-
-### Chatbot
-- `POST /api/chatbot/message` - Send message to AI chatbot
-
-## 🎨 UI Features
-
-### Dashboard
-- Real-time statistics cards
-- Interactive charts (Claims, Risk Distribution, Growth)
-- Fraud alerts panel
-- Recent activity feed
-- AI insights section
-
-### Data Tables
-- Advanced search functionality
-- Multi-column filtering
-- Pagination
-- Sortable columns
-- Export to CSV
-- Responsive design
-
-### Theme System
-- Dark/Light mode toggle
-- Persistent theme preference
-- Smooth transitions
-- Optimized for all devices
-
-### Animations
-- Page transitions
-- Hover effects
-- Loading states
-- Micro-interactions
-
-## 🤖 AI Features
-
-### Fraud Detection
-- Pattern recognition algorithms
-- Risk factor analysis
-- Automated flagging
-- Severity assessment
-- Investigation recommendations
-
-### Risk Scoring
-- Customer profile analysis
-- Policy type risk assessment
-- Historical data analysis
-- Premium calculation
-- Risk categorization
-
-### AI Chatbot
-- Natural language understanding
-- Context-aware responses
-- Policy information retrieval
-- Claim assistance
-- Customer support automation
-
-## 🔧 Configuration
-
-### Environment Variables
-```env
-PORT=5000
-MONGODB_URI=mongodb://localhost:27017/insureai
-JWT_SECRET=your_jwt_secret_key_here_change_in_production
-NODE_ENV=development
-```
-
-### TailwindCSS Configuration
-- Custom color palette
-- Dark mode support
-- Responsive breakpoints
-- Custom animations
-- Extended utilities
-
-## 📱 Responsive Design
-
-- **Mobile**: 320px and up
-- **Tablet**: 768px and up
-- **Desktop**: 1024px and up
-- **Large Desktop**: 1280px and up
-
-## 🔒 Security Features
-
-- JWT authentication
-- Password hashing with bcrypt
-- Input validation and sanitization
-- CORS configuration
-- Security headers with Helmet
-- Rate limiting ready
-- SQL injection prevention
-
-## 🚀 Performance
-
-- Code splitting
-- Lazy loading
-- Optimized images
-- Caching strategies
-- Bundle optimization
-- Database indexing
-
-## 📈 Analytics & Monitoring
-
-- Real-time dashboard metrics
-- User activity tracking
-- Performance monitoring
-- Error tracking
-- Usage analytics
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License.
-
-## 🆘 Support
-
-For support and questions, please contact the development team or create an issue in the repository.
-
-## 🎯 Future Enhancements
-
-- [ ] Multi-language support
-- [ ] Advanced reporting
-- [ ] Integration with external APIs
-- [ ] Mobile app development
-- [ ] Advanced AI models
-- [ ] Real-time notifications
-- [ ] Document management
-- [ ] Payment processing integration
-- [ ] Advanced user roles and permissions
-- [ ] Audit logging
+A production-grade full-stack AI SaaS web application for insurance companies.
+Built with React, Node.js, MongoDB, and integrated AI-powered features.
 
 ---
 
-**INSUREAI** - Transforming insurance with artificial intelligence 🚀
+## 🏗️ Project Structure
+
+```
+insurai/
+├── frontend/                    # React.js frontend
+│   ├── public/
+│   │   └── index.html
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── Layout.js        # Main layout wrapper
+│   │   │   ├── Sidebar.js       # Navigation sidebar
+│   │   │   ├── Navbar.js        # Top navigation bar
+│   │   │   ├── KPICard.js       # Dashboard KPI cards
+│   │   │   └── StatusBadge.js   # Status indicator badges
+│   │   ├── pages/
+│   │   │   ├── Landing.js       # Public landing page
+│   │   │   ├── Login.js         # Authentication - login
+│   │   │   ├── Signup.js        # Authentication - signup
+│   │   │   ├── Dashboard.js     # Main dashboard
+│   │   │   ├── Policies.js      # Policy management
+│   │   │   ├── Claims.js        # Claims management
+│   │   │   ├── Customers.js     # Customer management
+│   │   │   ├── Analytics.js     # Analytics & charts
+│   │   │   ├── FraudDetection.js# Fraud alerts & management
+│   │   │   ├── RiskAnalysis.js  # AI risk assessment
+│   │   │   ├── Chatbot.js       # AI chatbot assistant
+│   │   │   └── Settings.js      # User settings
+│   │   ├── context/
+│   │   │   ├── AuthContext.js   # Authentication state
+│   │   │   └── ThemeContext.js  # Dark/light theme
+│   │   ├── utils/
+│   │   │   ├── api.js           # Axios API client
+│   │   │   └── mockData.js      # Demo data (offline mode)
+│   │   ├── App.js               # Root component & routing
+│   │   ├── index.js             # React entry point
+│   │   └── index.css            # Global styles + Tailwind
+│   ├── package.json
+│   └── tailwind.config.js
+│
+└── backend/                     # Node.js Express backend
+    ├── models/
+    │   ├── User.js              # User schema
+    │   ├── Policy.js            # Insurance policy schema
+    │   ├── Claim.js             # Claims schema
+    │   ├── Customer.js          # Customer schema
+    │   └── FraudAlert.js        # Fraud alert schema
+    ├── controllers/
+    │   ├── authController.js    # Auth logic (signup/login)
+    │   ├── policiesController.js
+    │   ├── claimsController.js  # Includes AI fraud scoring
+    │   ├── customersController.js
+    │   ├── analyticsController.js
+    │   ├── fraudController.js
+    │   ├── riskController.js    # AI risk analysis
+    │   └── chatController.js    # AI chatbot responses
+    ├── routes/
+    │   ├── auth.js
+    │   ├── policies.js
+    │   ├── claims.js
+    │   ├── customers.js
+    │   ├── analytics.js
+    │   ├── fraudAlerts.js
+    │   ├── riskAnalysis.js
+    │   └── chat.js
+    ├── middleware/
+    │   └── auth.js              # JWT protect middleware
+    ├── server.js                # Express app entry point
+    ├── package.json
+    └── .env.example
+```
+
+---
+
+## ⚡ Quick Start
+
+### Prerequisites
+- Node.js v18+
+- MongoDB (local or Atlas)
+- npm or yarn
+
+---
+
+### 1. Clone & Setup
+
+```bash
+git clone <your-repo>
+cd insurai
+```
+
+---
+
+### 2. Backend Setup
+
+```bash
+cd backend
+
+# Install dependencies
+npm install
+
+# Configure environment
+cp .env.example .env
+```
+
+Edit `.env`:
+```env
+PORT=5000
+MONGO_URI=mongodb://localhost:27017/insurai
+JWT_SECRET=your_super_secret_key_here
+NODE_ENV=development
+```
+
+**Start the backend:**
+```bash
+npm run dev      # Development (with nodemon)
+npm start        # Production
+```
+
+Backend runs on: `http://localhost:5000`
+Health check: `http://localhost:5000/api/health`
+
+---
+
+### 3. Frontend Setup
+
+```bash
+cd frontend
+
+# Install dependencies
+npm install
+
+# Create env file (optional - defaults to localhost:5000)
+echo "REACT_APP_API_URL=http://localhost:5000/api" > .env
+```
+
+**Start the frontend:**
+```bash
+npm start
+```
+
+Frontend runs on: `http://localhost:3000`
+
+---
+
+### 4. MongoDB Connection
+
+**Option A: Local MongoDB**
+```bash
+# Install MongoDB
+brew install mongodb-community   # macOS
+# or download from mongodb.com/try/download/community
+
+# Start MongoDB
+mongod --dbpath /data/db
+```
+
+**Option B: MongoDB Atlas (Cloud)**
+1. Create free account at cloud.mongodb.com
+2. Create cluster → Get connection string
+3. Update MONGO_URI in .env:
+```env
+MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/insurai
+```
+
+---
+
+## 🚀 Demo Mode (Without Backend)
+
+The app works **fully without a backend** using built-in mock data!
+
+1. Just run `npm start` in the frontend
+2. Click "Try Demo Account" on the login page
+3. Explore all features with realistic sample data
+
+---
+
+## 🔌 API Endpoints
+
+### Authentication
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/auth/signup` | Create new account |
+| POST | `/api/auth/login` | Login with JWT |
+| GET | `/api/auth/me` | Get current user |
+
+### Policies
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/policies` | List all policies |
+| POST | `/api/policies` | Create policy |
+| PUT | `/api/policies/:id` | Update policy |
+| DELETE | `/api/policies/:id` | Delete policy |
+
+### Claims
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/claims` | List all claims |
+| POST | `/api/claims` | Submit claim (AI fraud scored) |
+| PUT | `/api/claims/:id` | Update claim status |
+
+### Customers
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/customers` | List customers |
+| POST | `/api/customers` | Create customer |
+| GET | `/api/customers/:id` | Get customer |
+| PUT | `/api/customers/:id` | Update customer |
+
+### Analytics & AI
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/analytics` | Dashboard KPIs & charts |
+| GET | `/api/fraud-alerts` | Fraud detection alerts |
+| PUT | `/api/fraud-alerts/:id` | Update alert status |
+| GET | `/api/risk-analysis` | AI risk portfolio analysis |
+| POST | `/api/chat` | AI chatbot response |
+
+---
+
+## 🎨 UI Features
+
+- **Dark/Light Theme** — Toggle via navbar or Settings page
+- **Responsive Design** — Mobile sidebar, fluid grid layouts
+- **Framer Motion** — Page transitions, card animations, progress bars
+- **Recharts** — Line, Area, Bar, Pie, Radar charts
+- **Real-time Fraud Scores** — Color-coded score bars per claim
+- **KPI Cards** — Animated counters with trend indicators
+- **AI Insights Panel** — Risk warnings and recommendations
+- **Chatbot Interface** — Multi-turn conversation with AI assistant
+
+---
+
+## 🛡️ Database Schemas
+
+### User
+```
+name, email, password (bcrypt), role (admin|agent|underwriter|customer), isActive
+```
+
+### Policy
+```
+policyNumber, type, holder (→Customer), premium, coverageAmount, startDate, endDate, status, riskScore, createdBy (→User)
+```
+
+### Claim
+```
+claimNumber, policy (→Policy), customer (→Customer), type, amount, description, status, fraudScore, isFlagged, documents[]
+```
+
+### Customer
+```
+name, email, phone, address, riskCategory, kycStatus, totalPolicies, totalClaims, lifetimeValue
+```
+
+### FraudAlert
+```
+claim (→Claim), customer (→Customer), alertType, severity, fraudScore, description, status, detectedAt
+```
+
+---
+
+## 🔐 Security Features
+
+- JWT tokens (7-day expiry)
+- bcrypt password hashing (salt rounds: 12)
+- Protected routes (middleware)
+- Role-based access (admin, agent, underwriter, customer)
+- CORS configured for frontend origin
+
+---
+
+## 🤖 AI Features
+
+| Feature | Implementation |
+|---------|---------------|
+| Fraud Detection | Rule-based + ML simulation scoring 0-100 |
+| Risk Scoring | Multi-factor policy risk assessment |
+| Auto-flagging | Claims >60 fraud score auto-flagged |
+| AI Insights | Portfolio-level risk warnings |
+| Chatbot | Intent-based response engine (OpenAI-ready) |
+
+### To integrate OpenAI ChatGPT:
+
+In `backend/controllers/chatController.js`, replace the mock logic:
+```javascript
+const { Configuration, OpenAIApi } = require('openai');
+const openai = new OpenAIApi(new Configuration({ apiKey: process.env.OPENAI_API_KEY }));
+
+const completion = await openai.createChatCompletion({
+  model: 'gpt-3.5-turbo',
+  messages: [
+    { role: 'system', content: 'You are InsurAI assistant for an insurance platform.' },
+    { role: 'user', content: message }
+  ]
+});
+reply = completion.data.choices[0].message.content;
+```
+
+---
+
+## 📦 Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React 18, TailwindCSS, Framer Motion |
+| Charts | Recharts |
+| Routing | React Router v6 |
+| HTTP Client | Axios |
+| Backend | Node.js, Express.js |
+| Database | MongoDB, Mongoose |
+| Auth | JWT, bcryptjs |
+| Fonts | Sora (display), DM Sans (body) |
+
+---
+
+## 🌟 Portfolio Notes
+
+This project demonstrates:
+- Full-stack SaaS architecture
+- AI/ML integration patterns
+- JWT auth & protected routing
+- Complex data visualization
+- Modern UX with dark theme
+- RESTful API design
+- MongoDB schema design
+- Real-world insurance domain logic
+
+Built for Infosys internship portfolio. © 2025 InsurAI.

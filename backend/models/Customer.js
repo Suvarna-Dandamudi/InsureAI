@@ -1,50 +1,19 @@
 const mongoose = require('mongoose');
 
 const customerSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, 'Customer name is required'],
-    trim: true,
-  },
-  email: {
-    type: String,
-    required: [true, 'Email is required'],
-    unique: true,
-    lowercase: true,
-    match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email'],
-  },
-  phone: {
-    type: String,
-    required: [true, 'Phone number is required'],
-  },
-  address: {
-    street: String,
-    city: String,
-    state: String,
-    zipCode: String,
-    country: String,
-  },
-  dateOfBirth: {
-    type: Date,
-    required: [true, 'Date of birth is required'],
-  },
-  policies: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Policy',
-  }],
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
-
-customerSchema.pre('save', function(next) {
-  this.updatedAt = Date.now();
-  next();
-});
+  name: { type: String, required: true, trim: true },
+  email: { type: String, required: true, unique: true, lowercase: true },
+  phone: { type: String, required: true },
+  address: { type: String },
+  dateOfBirth: { type: Date },
+  gender: { type: String, enum: ['Male', 'Female', 'Other'] },
+  occupation: { type: String },
+  riskCategory: { type: String, enum: ['Low', 'Medium', 'High'], default: 'Low' },
+  kycStatus: { type: String, enum: ['Verified', 'Pending', 'Failed'], default: 'Pending' },
+  totalPolicies: { type: Number, default: 0 },
+  totalClaims: { type: Number, default: 0 },
+  lifetimeValue: { type: Number, default: 0 },
+  isActive: { type: Boolean, default: true },
+}, { timestamps: true });
 
 module.exports = mongoose.model('Customer', customerSchema);
